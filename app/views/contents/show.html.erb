@@ -44,7 +44,7 @@
     <% end %>
 
     <%# CTA %>
-    <%= link_to @content.url, target: "_blank", rel: "noopener noreferrer",
+    <%= link_to safe_external_url(@content.url), target: "_blank", rel: "noopener noreferrer",
           class: "mt-8 block w-full rounded-2xl bg-indigo-600 py-4 text-center text-base font-semibold text-white shadow hover:bg-indigo-700 active:scale-[0.98] transition" do %>
       Visit →
     <% end %>

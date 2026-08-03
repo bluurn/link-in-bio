@@ -6,7 +6,8 @@ class Content < ApplicationRecord
 
   validates :title,   presence: true
   validates :creator, presence: true
-  validates :url,     presence: true
+  validates :url, presence: true,
+                  format: { with: /\Ahttps?:\/\/\S+\z/i, message: "must be a valid http or https URL" }
   validates :price,   numericality: { greater_than_or_equal_to: 0 }
 
   scope :by_kind, ->(k) { k.present? ? where(kind: k) : all }
