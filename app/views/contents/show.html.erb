@@ -5,65 +5,59 @@
   color = kind_colors[@content.kind] || "bg-gray-100/90 text-gray-700"
   gradient = kind_bg[@content.kind] || "from-gray-500 to-gray-700"
 %>
-<div class="min-h-screen bg-white">
-  <%# Hero banner %>
-  <div class="relative h-[45vh] min-h-52 w-full overflow-hidden">
-    <% if @content.cover_image_url.present? %>
-      <img src="<%= @content.cover_image_url %>" alt="" class="absolute inset-0 h-full w-full object-cover">
-    <% else %>
-      <div class="absolute inset-0 bg-gradient-to-br <%= gradient %>"></div>
-    <% end %>
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
+<div class="min-h-screen bg-gray-100">
+  <div class="mx-auto flex min-h-screen max-w-lg flex-col">
+    <%# Hero banner %>
+    <div class="relative h-[45vh] min-h-52 w-full overflow-hidden sm:rounded-b-none">
+      <% if @content.cover_image_url.present? %>
+        <img src="<%= @content.cover_image_url %>" alt="" class="absolute inset-0 h-full w-full object-cover">
+      <% else %>
+        <div class="absolute inset-0 bg-gradient-to-br <%= gradient %>"></div>
+      <% end %>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
 
-    <%= link_to community_path(@community.slug),
-          class: "absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0">
-        <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>
-      </svg>
-      <span><%= @community.name %></span>
-    <% end %>
+      <%= link_to community_path(@community.slug),
+            class: "absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0">
+          <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>
+        </svg>
+        <span><%= @community.name %></span>
+      <% end %>
 
-    <div class="absolute bottom-0 left-0 right-0 p-5 pb-10">
-      <span class="inline-flex rounded-full px-3 py-0.5 text-xs font-semibold backdrop-blur-sm <%= color %>">
-        <%= @content.kind.capitalize %>
-      </span>
-      <h1 class="mt-2 text-2xl font-bold text-white leading-tight drop-shadow"><%= @content.title %></h1>
-      <div class="mt-1 flex items-center gap-3">
-        <p class="text-sm text-white/80">by <%= @content.creator %></p>
-        <span class="text-white/50">·</span>
-        <p class="text-sm font-semibold text-white">
-          <%= @content.price.zero? ? "Free" : number_to_currency(@content.price) %>
-        </p>
+      <div class="absolute bottom-0 left-0 right-0 p-5 pb-10">
+        <span class="inline-flex rounded-full px-3 py-0.5 text-xs font-semibold backdrop-blur-sm <%= color %>">
+          <%= @content.kind.capitalize %>
+        </span>
+        <h1 class="mt-2 text-2xl font-bold text-white leading-tight drop-shadow"><%= @content.title %></h1>
+        <div class="mt-1 flex items-center gap-3">
+          <p class="text-sm text-white/80">by <%= @content.creator %></p>
+          <span class="text-white/50">·</span>
+          <p class="text-sm font-semibold text-white">
+            <%= @content.price.zero? ? "Free" : number_to_currency(@content.price) %>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <%# Content card pulls up over the banner, creating a gradient seam %>
-  <div class="relative -mt-6 rounded-t-3xl bg-white px-5 pt-6 pb-28">
-    <% if @content.description.present? %>
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-gray-400">About</h2>
-      <div data-controller="expand">
-        <p data-expand-target="body" class="mt-2 text-gray-700 leading-relaxed line-clamp-4">
-          <%= @content.description %>
-        </p>
-        <button data-expand-target="toggle" data-action="click->expand#expand"
-                class="mt-1 text-sm font-medium text-indigo-600 hover:text-indigo-800">
-          Show more
-        </button>
-      </div>
-    <% end %>
-  </div>
+    <%# Content card pulls up over the banner, creating a gradient seam %>
+    <div class="relative -mt-6 grow rounded-t-3xl bg-white px-5 pt-6 pb-28">
+      <% if @content.description.present? %>
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-gray-400">About</h2>
+        <p class="mt-2 text-gray-700 leading-relaxed"><%= @content.description %></p>
+      <% end %>
+    </div>
 
-  <%# Sticky CTA %>
-  <div class="fixed bottom-0 left-0 right-0 border-t border-gray-100 bg-white/95 px-4 py-4 backdrop-blur-sm">
-    <%= link_to safe_external_url(@content.url), target: "_blank", rel: "noopener noreferrer",
-          class: "block w-full rounded-2xl bg-indigo-600 py-4 text-center text-base font-semibold text-white shadow hover:bg-indigo-700 active:scale-[0.98] transition" do %>
-      <span class="inline-flex items-center gap-2">
-        Visit
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-          <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
-        </svg>
-      </span>
-    <% end %>
+    <%# Sticky CTA — constrained to the same column %>
+    <div class="fixed bottom-0 left-1/2 w-full max-w-lg -translate-x-1/2 border-t border-gray-100 bg-white/95 px-4 py-4 backdrop-blur-sm">
+      <%= link_to safe_external_url(@content.url), target: "_blank", rel: "noopener noreferrer",
+            class: "block w-full rounded-2xl bg-indigo-600 py-4 text-center text-base font-semibold text-white shadow hover:bg-indigo-700 active:scale-[0.98] transition" do %>
+        <span class="inline-flex items-center gap-2">
+          Visit
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+            <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+      <% end %>
+    </div>
   </div>
 </div>

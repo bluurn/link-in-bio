@@ -1,5 +1,5 @@
 <% content_for :title, @community.name %>
-<div class="min-h-screen bg-gray-50">
+<div class="flex min-h-screen flex-col bg-gray-50">
 
   <%# Hero banner — DiceBear as background %>
   <div class="relative h-16 overflow-hidden bg-indigo-100">
@@ -14,18 +14,18 @@
     </div>
   </div>
 
-  <div class="mx-auto max-w-lg px-4 pt-5">
+  <div class="mx-auto flex w-full max-w-5xl grow flex-col px-4 pt-5">
     <%# Selected content cards %>
     <% if @selections.empty? %>
       <%= render "shared/empty_state", message: "No links yet." %>
     <% else %>
-      <div class="space-y-3 pb-10">
+      <div class="grid grid-cols-1 gap-4 pb-10 sm:grid-cols-2 lg:grid-cols-3">
         <% @selections.each do |selection| %>
           <%= render "contents/content_card", content: selection.content, community: @community %>
         <% end %>
       </div>
     <% end %>
 
-    <p class="pb-6 text-center text-xs text-gray-400">Powered by Bryght</p>
+    <p class="mt-auto pb-6 pt-4 text-center text-xs text-gray-400">Powered by Bryght</p>
   </div>
 </div>
