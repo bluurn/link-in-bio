@@ -20,7 +20,7 @@ class SelectionsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "Selection.count", -1 do
       delete selection_path("bryght", selection.id)
     end
-    assert_redirected_to manage_path("bryght", q: nil, kind: nil)
+    assert_redirected_to manage_path("bryght", q: nil, kind: nil, tab: "1")
   end
 
   test "preserves search params through redirect" do
