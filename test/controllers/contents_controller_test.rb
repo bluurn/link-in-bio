@@ -11,4 +11,9 @@ class ContentsControllerTest < ActionDispatch::IntegrationTest
     get community_content_path("bryght", "nonexistent-slug")
     assert_response :not_found
   end
+
+  test "404 when community slug does not exist" do
+    get community_content_path("nonexistent", contents(:intro_ruby))
+    assert_response :not_found
+  end
 end

@@ -23,8 +23,13 @@ class SelectionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to manage_path("bryght", q: nil, kind: nil, tab: "1")
   end
 
-  test "preserves search params through redirect" do
+  test "preserves search params through redirect on create" do
     post selections_path("bryght"), params: { content_id: contents(:jazz_playlist).id, q: "jazz", kind: "playlist" }
     assert_redirected_to manage_path("bryght", q: "jazz", kind: "playlist")
+  end
+
+  test "preserves search params through redirect on destroy" do
+    delete selection_path("bryght", selections(:bryght_ruby).id), params: { q: "ruby", kind: "course" }
+    assert_redirected_to manage_path("bryght", q: "ruby", kind: "course", tab: "1")
   end
 end

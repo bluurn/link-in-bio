@@ -1,6 +1,11 @@
 require "test_helper"
 
 class CommunitiesControllerTest < ActionDispatch::IntegrationTest
+  test "root redirects to first community" do
+    get root_path
+    assert_redirected_to community_path(communities(:bryght).slug)
+  end
+
   test "shows public page for valid slug" do
     get community_path("bryght")
     assert_response :success
