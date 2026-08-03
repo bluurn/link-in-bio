@@ -11,4 +11,10 @@ class CommunitiesControllerTest < ActionDispatch::IntegrationTest
     get community_path("nonexistent")
     assert_response :not_found
   end
+
+  test "content cards link to slug-based URLs" do
+    get community_path("bryght")
+    assert_response :success
+    assert_select "a[href*='/contents/introduction-to-ruby']"
+  end
 end

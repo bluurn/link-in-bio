@@ -15,7 +15,7 @@ Content.kinds.each_key do |kind|
     ) do |c|
       c.creator         = Faker::Name.name
       c.kind            = kind
-      c.description     = Faker::Lorem.paragraphs(number: 4, supplemental: true).join("\n\n")
+      c.description     = Faker::Lorem.paragraphs(number: 16, supplemental: true).join("\n\n")
       c.price           = prices.sample
       c.url             = Faker::Internet.url(host: "example.com")
       c.cover_image_url = "https://picsum.photos/seed/#{kind}#{i}/400/225"

@@ -17,7 +17,7 @@ class Content < ApplicationRecord
   scope :search,  ->(q) { q.present? ? where("title ILIKE ?", "%#{q}%") : all }
 
   def to_param
-    slug
+    self[:slug]
   end
 
   private
