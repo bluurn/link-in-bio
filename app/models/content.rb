@@ -4,8 +4,9 @@ class Content < ApplicationRecord
 
   enum :kind, { course: 0, event: 1, playlist: 2 }
 
-  validates :title,   presence: true
-  validates :creator, presence: true
+  validates :title,       presence: true
+  validates :creator,     presence: true
+  validates :description, presence: true
   validates :url, presence: true,
                   format: { with: /\Ahttps?:\/\/\S+\z/i, message: "must be a valid http or https URL" }
   validates :price,   numericality: { greater_than_or_equal_to: 0 }

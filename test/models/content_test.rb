@@ -17,6 +17,13 @@ class ContentTest < ActiveSupport::TestCase
     assert_not c.valid?
   end
 
+  test "requires description" do
+    c = contents(:intro_ruby).dup
+    c.slug = "unique-#{rand(9999)}"
+    c.description = ""
+    assert_not c.valid?
+  end
+
   test "requires url" do
     c = contents(:intro_ruby).dup
     c.url = ""
