@@ -1,0 +1,63 @@
+stages:
+  - lint
+  - security
+  - test
+
+default:
+  image: ruby:3.4.9
+  before_script:
+    - apt-get update -qq && apt-get install -y --no-install-recommends libpq-dev
+    - bundle config set --local path vendor/bundle
+    - bundle install --jobs 4 --retry 3
+
+cache:
+  key:
+    files:
+      - Gemfile.lock
+  paths:
+    - vendor/bundle
+
+# ── Lint ────────────────────────────────────────────────────────────────────
+
+rubocop:
+  stage: lint
+  script:
+    - bin/rubocop
+
+# ── Security ─────────────────────────────────────────────────────────────────
+
+brakeman:
+  stage: security
+  script:
+    - bin/brakeman --no-pager
+
+bundle_audit:
+  stage: security
+  script:
+    - bundle exec bundler-audit check --update
+
+importmap_audit:
+  stage: security
+  script:
+    - bin/importmap audit
+
+# ── Test ─────────────────────────────────────────────────────────────────────
+
+test:
+  stage: test
+  services:
+    - name: postgres:17-alpine
+      alias: postgres
+  variables:
+    POSTGRES_HOST_AUTH_METHOD: trust
+    PGHOST: postgres
+    PGPORT: "5432"
+    RAILS_ENV: test
+  script:
+    - bin/rails db:test:prepare
+    - bin/rails test
+  artifacts:
+    when: on_failure
+    paths:
+      - tmp/screenshots
+    expire_in: 1 week
