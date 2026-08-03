@@ -10,8 +10,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_03_102458) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_03_105640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "communities", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_communities_on_slug", unique: true
+  end
+
+  create_table "contents", force: :cascade do |t|
+    t.string "cover_image_url"
+    t.datetime "created_at", null: false
+    t.string "creator", null: false
+    t.text "description"
+    t.integer "kind", default: 0, null: false
+    t.decimal "price", precision: 8, scale: 2, default: "0.0", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "url", null: false
+  end
+
+  create_table "selections", force: :cascade do |t|
+    t.bigint "community_id", null: false
+    t.bigint "content_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id", "content_id"], name: "index_selections_on_community_id_and_content_id", unique: true
+    t.index ["community_id"], name: "index_selections_on_community_id"
+    t.index ["content_id"], name: "index_selections_on_content_id"
+  end
+
+  add_foreign_key "selections", "communities"
+  add_foreign_key "selections", "contents"
 end

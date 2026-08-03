@@ -1,9 +1,31 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+require "faker"
+
+# Community
+bryght = Community.find_or_create_by!(slug: "bryght") do |c|
+  c.name = "Bryght Community"
+end
+
+# Catalog — 120 items, 40 per kind
+prices = [ 0, 0, 9.99, 19.99, 29.99, 49.99 ]
+
+Content.kinds.each_key do |kind|
+  40.times do |i|
+    Content.find_or_create_by!(
+      title: "#{Faker::Educator.course} – #{kind.capitalize} #{i + 1}"
+    ) do |c|
+      c.creator         = Faker::Name.name
+      c.kind            = kind
+      c.description     = Faker::Lorem.paragraph(sentence_count: 3)
+      c.price           = prices.sample
+      c.url             = Faker::Internet.url(host: "example.com")
+      c.cover_image_url = "https://picsum.photos/seed/#{kind}#{i}/400/225"
+    end
+  end
+end
+
+# Pre-select 6 items for the demo
+Content.limit(6).each do |content|
+  bryght.selections.find_or_create_by!(content: content)
+end
+
+puts "Seeded: 1 community, #{Content.count} contents, #{bryght.selections.count} selections"
