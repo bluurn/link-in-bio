@@ -1,0 +1,24 @@
+<div class="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+  <div class="mx-auto max-w-lg px-4 py-10">
+    <%# Community header %>
+    <div class="mb-8 text-center">
+      <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-indigo-600 text-2xl font-bold text-white">
+        <%= @community.name.first %>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @community.name %></h1>
+    </div>
+
+    <%# Selected content cards %>
+    <% if @selections.empty? %>
+      <%= render "shared/empty_state", message: "No links yet." %>
+    <% else %>
+      <div class="space-y-3">
+        <% @selections.each do |selection| %>
+          <%= render "contents/content_card", content: selection.content, community: @community %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <p class="mt-10 text-center text-xs text-gray-400">Powered by Bryght</p>
+  </div>
+</div>

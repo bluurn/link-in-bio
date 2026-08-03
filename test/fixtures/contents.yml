@@ -1,0 +1,26 @@
+intro_ruby:
+  title: Introduction to Ruby
+  creator: Jane Doe
+  kind: 0
+  description: Learn Ruby from scratch.
+  price: 0.00
+  url: https://example.com/ruby
+  cover_image_url:
+
+rails_summit:
+  title: Rails Summit 2026
+  creator: John Smith
+  kind: 1
+  description: The biggest Rails event of the year.
+  price: 49.99
+  url: https://example.com/rails-summit
+  cover_image_url:
+
+jazz_playlist:
+  title: Jazz Essentials
+  creator: DJ Cool
+  kind: 2
+  description: A curated jazz collection.
+  price: 9.99
+  url: https://example.com/jazz
+  cover_image_url:

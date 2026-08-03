@@ -1,0 +1,30 @@
+<%
+  kind_colors = { "course" => "bg-blue-100 text-blue-700", "event" => "bg-emerald-100 text-emerald-700", "playlist" => "bg-purple-100 text-purple-700" }
+  color = kind_colors[content.kind] || "bg-gray-100 text-gray-700"
+%>
+<%= link_to community_content_path(community.slug, content), class: "flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 transition hover:shadow-md active:scale-[0.98]" do %>
+  <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+    <% if content.cover_image_url.present? %>
+      <img src="<%= content.cover_image_url %>" alt="" class="h-full w-full object-cover">
+    <% else %>
+      <div class="flex h-full w-full items-center justify-center text-xl">
+        <% icons = { "course" => "📚", "event" => "📅", "playlist" => "🎵" } %>
+        <%= icons[content.kind] || "📄" %>
+      </div>
+    <% end %>
+  </div>
+  <div class="min-w-0 flex-1">
+    <div class="flex items-center gap-2">
+      <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium <%= color %>">
+        <%= content.kind.capitalize %>
+      </span>
+    </div>
+    <p class="mt-0.5 truncate font-semibold text-gray-900"><%= content.title %></p>
+    <p class="text-sm text-gray-500"><%= content.creator %></p>
+  </div>
+  <div class="shrink-0 text-right">
+    <p class="font-semibold text-gray-900">
+      <%= content.price.zero? ? "Free" : number_to_currency(content.price) %>
+    </p>
+  </div>
+<% end %>
