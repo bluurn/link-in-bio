@@ -15,7 +15,7 @@ Content.kinds.each_key do |kind|
     ) do |c|
       c.creator         = Faker::Name.name
       c.kind            = kind
-      c.description     = Faker::Lorem.paragraph(sentence_count: 3)
+      c.description     = Faker::Lorem.paragraphs(number: 4, supplemental: true).join("\n\n")
       c.price           = prices.sample
       c.url             = Faker::Internet.url(host: "example.com")
       c.cover_image_url = "https://picsum.photos/seed/#{kind}#{i}/400/225"
@@ -23,9 +23,11 @@ Content.kinds.each_key do |kind|
   end
 end
 
-# Pre-select 6 items for the demo
-Content.limit(6).each do |content|
-  bryght.selections.find_or_create_by!(content: content)
+# Pre-select 2 of each type for the demo
+Content.kinds.each_key do |kind|
+  Content.where(kind: kind).take(2).each do |content|
+    bryght.selections.find_or_create_by!(content: content)
+  end
 end
 
 puts "Seeded: 1 community, #{Content.count} contents, #{bryght.selections.count} selections"

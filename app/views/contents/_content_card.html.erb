@@ -1,30 +1,41 @@
 <%
   kind_colors = { "course" => "bg-blue-100 text-blue-700", "event" => "bg-emerald-100 text-emerald-700", "playlist" => "bg-purple-100 text-purple-700" }
-  color = kind_colors[content.kind] || "bg-gray-100 text-gray-700"
+  kind_bg     = { "course" => "from-blue-400 to-blue-600", "event" => "from-emerald-400 to-emerald-600", "playlist" => "from-purple-400 to-purple-600" }
+  color  = kind_colors[content.kind] || "bg-gray-100 text-gray-700"
+  gradient = kind_bg[content.kind] || "from-gray-400 to-gray-600"
 %>
-<%= link_to community_content_path(community.slug, content), class: "flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 transition hover:shadow-md active:scale-[0.98]" do %>
-  <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-    <% if content.cover_image_url.present? %>
-      <img src="<%= content.cover_image_url %>" alt="" class="h-full w-full object-cover">
-    <% else %>
-      <div class="flex h-full w-full items-center justify-center text-xl">
-        <% icons = { "course" => "📚", "event" => "📅", "playlist" => "🎵" } %>
-        <%= icons[content.kind] || "📄" %>
-      </div>
-    <% end %>
+<%= link_to community_content_path(community.slug, content),
+      class: "relative block overflow-hidden rounded-2xl shadow-sm ring-1 ring-gray-100 transition hover:shadow-md active:scale-[0.98] aspect-[16/7]" do %>
+
+  <%# Background image or gradient fallback %>
+  <% if content.cover_image_url.present? %>
+    <img src="<%= content.cover_image_url %>" alt=""
+         class="absolute inset-0 h-full w-full object-cover">
+  <% else %>
+    <div class="absolute inset-0 bg-gradient-to-br <%= gradient %>"></div>
+  <% end %>
+
+  <%# Gradient overlay for text legibility %>
+  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+  <%# Kind badge — top left %>
+  <div class="absolute top-3 left-3">
+    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold backdrop-blur-sm <%= color %>">
+      <%= content.kind.capitalize %>
+    </span>
   </div>
-  <div class="min-w-0 flex-1">
-    <div class="flex items-center gap-2">
-      <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium <%= color %>">
-        <%= content.kind.capitalize %>
-      </span>
-    </div>
-    <p class="mt-0.5 truncate font-semibold text-gray-900"><%= content.title %></p>
-    <p class="text-sm text-gray-500"><%= content.creator %></p>
-  </div>
-  <div class="shrink-0 text-right">
-    <p class="font-semibold text-gray-900">
+
+  <%# Price — top right %>
+  <div class="absolute top-3 right-3">
+    <span class="inline-flex rounded-full bg-black/40 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
       <%= content.price.zero? ? "Free" : number_to_currency(content.price) %>
-    </p>
+    </span>
   </div>
+
+  <%# Text — bottom %>
+  <div class="absolute bottom-0 left-0 right-0 p-4">
+    <p class="font-semibold text-white leading-snug"><%= content.title %></p>
+    <p class="mt-0.5 text-sm text-white/75"><%= content.creator %></p>
+  </div>
+
 <% end %>
