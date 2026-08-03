@@ -61,6 +61,15 @@ bin/rubocop    # style (rubocop-rails-omakase)
 bin/brakeman   # static security scan
 ```
 
+## Architecture
+
+Rails 8.1 monolith — no separate frontend build step.
+
+- **Import maps** — JavaScript served directly from `app/javascript`; no Node, no webpack, no bundler
+- **Hotwire (Turbo + Stimulus)** — Turbo Frames for catalog live-search; Stimulus for tab switching, debounced search, and scroll restoration
+- **Tailwind CSS v4** (standalone binary via `tailwindcss-rails`) — compiled by `bin/dev`, no PostCSS or Node required
+- **PostgreSQL** — managed by devenv or Docker Compose; connection config via `PGHOST` / `PGPORT` env vars
+
 ---
 
 ## Decisions
@@ -72,6 +81,8 @@ bin/brakeman   # static security scan
 **No authentication on `/manage`.** Out of scope per the spec. The route is effectively unlisted — no link to it appears on the public page.
 
 **Single community in seeds, multi-community in code.** The data model and routes support multiple communities (each with their own slug and independent selection), but the seeds only create one (`bryght`) for the demo.
+
+**Mobile-first manage page with tab switching.** On mobile the catalog and selection panel are stacked behind a tab bar (Stimulus `tabs` controller). On desktop they become a two-column grid. Scroll position is preserved across Add/Remove navigations via `sessionStorage` (mobile only — on desktop the panels scroll independently inside `overflow-y-auto` containers). After a Remove the tab controller reads a `?tab=1` query param (added by the redirect) to restore the Selected tab; the param is cleaned up with `history.replaceState` immediately after.
 
 **Cover images via external URLs.** Seeds use `picsum.photos` placeholder images. Active Storage is available in the stack but upload/media management is explicitly out of scope.
 
