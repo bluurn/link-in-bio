@@ -1,5 +1,6 @@
 intro_ruby:
   title: Introduction to Ruby
+  slug: introduction-to-ruby
   creator: Jane Doe
   kind: 0
   description: Learn Ruby from scratch.
@@ -9,6 +10,7 @@ intro_ruby:
 
 rails_summit:
   title: Rails Summit 2026
+  slug: rails-summit-2026
   creator: John Smith
   kind: 1
   description: The biggest Rails event of the year.
@@ -18,6 +20,7 @@ rails_summit:
 
 jazz_playlist:
   title: Jazz Essentials
+  slug: jazz-essentials
   creator: DJ Cool
   kind: 2
   description: A curated jazz collection.
