@@ -10,6 +10,6 @@ class SelectionsController < ApplicationController
   def destroy
     community = Community.find_by!(slug: params[:slug])
     community.selections.find(params[:id]).destroy!
-    redirect_to manage_path(community.slug, q: params[:q], kind: params[:kind])
+    redirect_to manage_path(community.slug, q: params[:q], kind: params[:kind], tab: "1")
   end
 end

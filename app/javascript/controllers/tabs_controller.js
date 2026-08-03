@@ -7,6 +7,15 @@ export default class extends Controller {
   connect() {
     this.mq = window.matchMedia("(min-width: 1024px)")
     this.mq.addEventListener("change", () => this.sync())
+    if (!this.mq.matches) {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get("tab") === "1") {
+        this.activeValue = 1
+        params.delete("tab")
+        const qs = params.toString()
+        history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""))
+      }
+    }
     this.sync()
   }
 
