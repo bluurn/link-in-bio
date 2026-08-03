@@ -1,91 +1,128 @@
 <% content_for :title, "Manage · #{@community.name}" %>
-<div class="min-h-screen bg-gray-50">
-  <%# Header %>
-  <div class="bg-white shadow-sm">
+<div class="bg-gray-50">
+
+  <%# Header — sticky %>
+  <div class="sticky top-0 z-10 bg-white shadow-sm">
     <div class="mx-auto max-w-5xl px-4 py-4">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs font-medium text-indigo-600 uppercase tracking-wide">Managing</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-indigo-600">Managing</p>
           <h1 class="text-xl font-bold text-gray-900"><%= @community.name %></h1>
         </div>
-        <%= link_to "View page →", community_path(@community.slug),
-              class: "text-sm text-indigo-600 hover:text-indigo-800 font-medium" %>
+        <%= link_to community_path(@community.slug),
+              class: "inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800" do %>
+          View page
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+            <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+          </svg>
+        <% end %>
       </div>
     </div>
   </div>
 
-  <div class="mx-auto max-w-5xl px-4 py-6">
+  <div class="mx-auto max-w-5xl px-4 py-4" data-controller="tabs">
+
+    <%# Mobile tab bar %>
+    <div class="mb-4 flex rounded-xl bg-gray-100 p-1 lg:hidden">
+      <button data-tabs-target="tab" data-action="click->tabs#show"
+              class="flex-1 rounded-lg py-2 text-sm font-medium transition bg-white shadow-sm text-gray-900">
+        Catalog
+      </button>
+      <button data-tabs-target="tab" data-action="click->tabs#show"
+              class="flex-1 rounded-lg py-2 text-sm font-medium transition text-gray-500">
+        Selected
+        <% if @selections.any? %>
+          <span class="ml-1 rounded-full bg-indigo-100 px-1.5 py-0.5 text-xs font-semibold text-indigo-700"><%= @selections.size %></span>
+        <% end %>
+      </button>
+    </div>
+
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-      <%# LEFT: Catalog %>
-      <div>
-        <h2 class="mb-3 text-base font-semibold text-gray-700">Catalog</h2>
+      <%# LEFT: Catalog — sticky column %>
+      <div data-tabs-target="panel">
+        <div class="lg:sticky lg:top-[73px]">
+          <h2 class="mb-3 text-base font-semibold text-gray-700">Catalog</h2>
 
-        <%# Search & filter form — targets the catalog Turbo Frame %>
-        <%= form_with url: manage_path(@community.slug), method: :get,
-              data: { turbo_frame: "catalog", controller: "search" } do |f| %>
-          <%# Type filter chips %>
-          <div class="mb-3 flex flex-wrap gap-2">
-            <% [["All", ""], ["Course", "course"], ["Event", "event"], ["Playlist", "playlist"]].each do |label, val| %>
-              <%= link_to label, manage_path(@community.slug, kind: val, q: @q),
-                    data: { turbo_frame: "catalog" },
-                    class: [
-                      "rounded-full px-3 py-1 text-sm font-medium transition",
-                      @kind == val ? "bg-indigo-600 text-white" : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50"
-                    ].join(" ") %>
-            <% end %>
-          </div>
-
-          <%# Search input %>
-          <%= f.hidden_field :kind, value: @kind %>
-          <%= f.text_field :q, value: @q,
-                placeholder: "Search by title…",
-                autocomplete: "off",
-                data: { action: "input->search#debounce" },
-                class: "w-full rounded-xl border-0 bg-white px-4 py-3 text-sm shadow-sm ring-1 ring-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
-        <% end %>
-
-        <%# Catalog results in Turbo Frame %>
-        <turbo-frame id="catalog" class="mt-3 block">
-          <% if @catalog.empty? %>
-            <%= render "shared/empty_state", message: @q.present? ? "No results for &ldquo;#{@q}&rdquo;." : "No contents found." %>
-          <% else %>
-            <div class="space-y-2">
-              <% @catalog.each do |content| %>
-                <%= render "contents/catalog_row",
-                      content: content,
-                      community: @community,
-                      selected_ids: @selected_ids,
-                      q: @q,
-                      kind: @kind %>
+          <%= form_with url: manage_path(@community.slug), method: :get,
+                data: { turbo_frame: "catalog", turbo_action: "replace", controller: "search" } do |f| %>
+            <%
+              chip_active  = { "" => "bg-gray-900 text-white", "course" => "bg-blue-100 text-blue-700", "event" => "bg-emerald-100 text-emerald-700", "playlist" => "bg-purple-100 text-purple-700" }
+              chip_inactive = "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50"
+            %>
+            <div class="mb-3 flex flex-wrap gap-2">
+              <% [["All", ""], ["Course", "course"], ["Event", "event"], ["Playlist", "playlist"]].each do |label, val| %>
+                <%= link_to label, manage_path(@community.slug, kind: val, q: @q),
+                      data: { action: "click->search#navigate" },
+                      class: [
+                        "rounded-full px-3 py-1 text-sm font-medium transition",
+                        @kind == val ? chip_active[val] : chip_inactive
+                      ].join(" ") %>
               <% end %>
             </div>
+            <%= f.hidden_field :kind, value: @kind %>
+            <div class="relative">
+              <%= f.text_field :q, value: @q,
+                    placeholder: "Search by title…",
+                    autocomplete: "off",
+                    data: { action: "input->search#debounce", search_target: "input" },
+                    class: "w-full rounded-xl border-0 bg-white px-4 py-3 pr-10 text-sm shadow-sm ring-1 ring-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+              <button type="button"
+                      data-search-target="clear"
+                      data-action="click->search#clear"
+                      <%= "hidden" if @q.blank? %>
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>
+                </svg>
+              </button>
+            </div>
           <% end %>
-        </turbo-frame>
+
+          <turbo-frame id="catalog" class="mt-3 block lg:max-h-[calc(100vh-16rem)] lg:overflow-y-auto lg:pr-1">
+            <% if @catalog.empty? %>
+              <%= render "shared/empty_state", message: @q.present? ? "No results for &ldquo;#{@q}&rdquo;." : "No contents found." %>
+            <% else %>
+              <div class="space-y-2 pb-4">
+                <% @catalog.each do |content| %>
+                  <%= render "contents/catalog_row",
+                        content: content,
+                        community: @community,
+                        selected_ids: @selected_ids,
+                        q: @q,
+                        kind: @kind %>
+                <% end %>
+              </div>
+            <% end %>
+          </turbo-frame>
+        </div>
       </div>
 
-      <%# RIGHT: Current selection %>
-      <div>
-        <h2 class="mb-3 text-base font-semibold text-gray-700">
-          Current selection
-          <span class="ml-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
-            <%= @selections.size %>
-          </span>
-        </h2>
-
-        <% if @selections.empty? %>
-          <%= render "shared/empty_state", message: "Nothing selected yet. Add items from the catalog." %>
-        <% else %>
-          <div class="space-y-2">
-            <% @selections.each do |selection| %>
-              <%= render "selections/selection_item",
-                    selection: selection,
-                    community: @community,
-                    q: @q,
-                    kind: @kind %>
+      <%# RIGHT: Selection — sticky column %>
+      <div data-tabs-target="panel" style="display:none">
+        <div class="lg:sticky lg:top-[73px]">
+          <h2 class="mb-3 text-base font-semibold text-gray-700">
+            Current selection
+            <span class="ml-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+              <%= @selections.size %>
+            </span>
+          </h2>
+          <div class="lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pr-1">
+            <% if @selections.empty? %>
+              <%= render "shared/empty_state", message: "Nothing selected yet. Add items from the catalog." %>
+            <% else %>
+              <div class="space-y-2 pb-4">
+                <% @selections.each do |selection| %>
+                  <%= render "selections/selection_item",
+                        selection: selection,
+                        community: @community,
+                        q: @q,
+                        kind: @kind %>
+                <% end %>
+              </div>
             <% end %>
           </div>
-        <% end %>
+        </div>
       </div>
 
     </div>
