@@ -42,6 +42,7 @@ Then open:
 
 | URL | Description |
 |-----|-------------|
+| `http://localhost:3000/` | Redirects to the first community's public page |
 | `http://localhost:3000/bryght` | Public link-in-bio page |
 | `http://localhost:3000/bryght/manage` | Management view |
 
@@ -82,4 +83,3 @@ bin/brakeman   # static security scan
 - No ordering control for selected items (insertion order only); drag-and-drop reordering would need a `position` column and a Stimulus drag controller
 - No pagination on the catalog — 120 items is fine, but the type filter + search keeps it practical at that scale; pagination would be needed beyond ~300 items
 - Cover image upload not implemented — `cover_image_url` stores a string URL; Active Storage wiring is left as a next step
-- No root route — visiting `/` returns 404; a landing or redirect to a default community would be a small addition
