@@ -9,15 +9,15 @@ end
 prices = [ 0, 0, 9.99, 19.99, 29.99, 49.99 ]
 
 event_formats  = %w[Summit Workshop Bootcamp Masterclass Meetup Symposium Retreat Hackathon]
-playlist_moods = ["Best of", "Intro to", "Deep Cuts:", "Essentials:", "Hidden Gems:", "Starting with", "The Making of"]
+playlist_moods = [ "Best of", "Intro to", "Deep Cuts:", "Essentials:", "Hidden Gems:", "Starting with", "The Making of" ]
 
 Content.kinds.each_key do |kind|
   40.times do |i|
     title = case kind
-            when "course"   then Faker::Educator.course
-            when "event"    then "#{Faker::Company.buzzword.capitalize} #{event_formats.sample}"
-            when "playlist" then "#{playlist_moods.sample} #{Faker::Music.genre}"
-            end
+    when "course"   then Faker::Educator.course
+    when "event"    then "#{Faker::Company.buzzword.capitalize} #{event_formats.sample}"
+    when "playlist" then "#{playlist_moods.sample} #{Faker::Music.genre}"
+    end
     Content.find_or_create_by!(title: title) do |c|
       c.creator         = Faker::Name.name
       c.kind            = kind
