@@ -65,6 +65,39 @@ bin/brakeman   # static security scan
 
 Rails 8.1 monolith — no separate frontend build step.
 
+```mermaid
+graph TD
+    Browser -->|GET /| CommunitiesController
+    Browser -->|GET /:slug| CommunitiesController
+    Browser -->|GET /:slug/manage| ManageController
+    Browser -->|GET /:slug/contents/:id| ContentsController
+    Browser -->|POST /:slug/selections| SelectionsController
+    Browser -->|DELETE /:slug/selections/:id| SelectionsController
+
+    CommunitiesController --> Community
+    ManageController --> Community
+    ManageController --> Content
+    SelectionsController --> Selection
+    ContentsController --> Content
+
+    Community -->|has_many through| Content
+    Community -->|has_many| Selection
+    Content -->|has_many| Selection
+    Selection -->|belongs_to| Community
+    Selection -->|belongs_to| Content
+
+    subgraph Frontend
+        TurboFrame["Turbo Frame (catalog)"]
+        SearchController["Stimulus: search"]
+        TabsController["Stimulus: tabs"]
+        ManageCtrl["Stimulus: manage"]
+        TurboFrame --> SearchController
+        TabsController --> ManageCtrl
+    end
+
+    ManageController -->|renders| TurboFrame
+```
+
 - **Import maps** — JavaScript served directly from `app/javascript`; no Node, no webpack, no bundler
 - **Hotwire (Turbo + Stimulus)** — Turbo Frames for catalog live-search; Stimulus for tab switching, debounced search, and scroll restoration
 - **Tailwind CSS v4** (standalone binary via `tailwindcss-rails`) — compiled by `bin/dev`, no PostCSS or Node required
